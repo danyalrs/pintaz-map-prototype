@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Pintaz Map Prototype  synthetic viewer layout</title>
+  <desc id="desc">Illustration only. Not a live Mapbox capture. No vehicle traces or private coordinates.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8eef5"/>
+      <stop offset="100%" stop-color="#d4dce8"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#c5ced9" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="960" height="540" fill="#1a1d23"/>
+  <rect x="12" y="12" width="936" height="516" rx="8" fill="#2b3038" stroke="#4a5568"/>
+  <text x="24" y="40" fill="#f3f4f6" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">Pintaz Map Prototype  viewer (synthetic layout)</text>
+  <text x="24" y="58" fill="#9ca3af" font-family="Segoe UI, system-ui, sans-serif" font-size="11">Example UI structure · Not live satellite imagery · OSM roads shown as stylized lines only</text>
+  <rect x="24" y="72" width="640" height="400" rx="6" fill="url(#sky)" stroke="#6b7280"/>
+  <rect x="24" y="72" width="640" height="400" fill="url(#grid)" opacity="0.4"/>
+  <path d="M 80 380 Q 200 320 320 350 T 560 280 T 620 200" fill="none" stroke="#e85d04" stroke-width="5" stroke-linecap="round"/>
+  <path d="M 100 400 Q 240 360 380 370 T 600 300" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 120 420 L 580 260" fill="none" stroke="#16a34a" stroke-width="3" stroke-dasharray="8 6" stroke-linecap="round"/>
+  <circle cx="420" cy="310" r="8" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="434" y="314" fill="#1f2937" font-family="Segoe UI, system-ui, sans-serif" font-size="10">observation route (illustrative)</text>
+  <rect x="680" y="72" width="256" height="400" rx="6" fill="#111827" stroke="#4b5563"/>
+  <text x="696" y="98" fill="#e5e7eb" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="600">Side panel</text>
+  <text x="696" y="122" fill="#9ca3af" font-family="Segoe UI, system-ui, sans-serif" font-size="10">· Pilot area selector</text>
+  <text x="696" y="140" fill="#9ca3af" font-family="Segoe UI, system-ui, sans-serif" font-size="10">· Road style legend</text>
+  <text x="696" y="158" fill="#9ca3af" font-family="Segoe UI, system-ui, sans-serif" font-size="10">· Route comparison (local)</text>
+  <text x="696" y="176" fill="#9ca3af" font-family="Segoe UI, system-ui, sans-serif" font-size="10">· OSM way inspection</text>
+  <rect x="24" y="484" width="912" height="32" rx="4" fill="#111827"/>
+  <text x="36" y="504" fill="#9ca3af" font-family="Segoe UI, system-ui, sans-serif" font-size="10">Status: Mapbox basemap + local MVT road overlay (zoom e 10) · Requires MAPBOX_ACCESS_TOKEN and built tiles under data/</text>
+</svg>
