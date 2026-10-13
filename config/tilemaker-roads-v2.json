@@ -1,0 +1,30 @@
+{
+  "layers": {
+    "roads": { "minzoom": 10, "maxzoom": 14, "simplify_below": 13, "simplify_level": 0.0003, "simplify_ratio": 2.0 }
+  },
+  "settings": {
+    "minzoom": 10,
+    "maxzoom": 14,
+    "basezoom": 14,
+    "include_ids": false,
+    "name": "Pintaz OSM baseline roads",
+    "version": "0.1.0",
+    "description": "All highway=* ways",
+    "compress": "gzip",
+    "metadata": {
+      "json": {
+        "vector_layers": [
+          {
+            "id": "roads",
+            "description": "OSM highways",
+            "fields": {
+              "highway": "String",
+              "osm_id": "String",
+              "name": "String"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "id": "A_one_lane",
+  "description": "One-lane one-way: two road edges, no interior boundary",
+  "expected_lane_count": 1,
+  "expected_decisions": ["single_frame_review_candidate", "multi_frame_review_candidate"]
+}

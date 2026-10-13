@@ -1,0 +1,18 @@
+{
+  "layers": {
+    "roads": {
+      "minzoom": 4,
+      "maxzoom": 14
+    }
+  },
+  "settings": {
+    "minzoom": 4,
+    "maxzoom": 14,
+    "basezoom": 14,
+    "include_ids": false,
+    "name": "Pintaz OSM baseline roads",
+    "version": "0.1.0",
+    "description": "All highway=* ways for Malaysia-Singapore-Brunei",
+    "compress": "gzip"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "mapboxStyle": "mapbox://styles/mapbox/light-v11",
+  "regionView": {
+    "center": [110, 4],
+    "zoom": 5
+  },
+  "regionBounds": {
+    "west": 98.5,
+    "south": 0.8,
+    "east": 119.5,
+    "north": 7.8
+  },
+  "sources": {
+    "mapboxBasemap": "mapbox-basemap",
+    "osmBaselineRoads": "osm-baseline-roads",
+    "futureQlogObservations": "qlog-observations",
+    "futureAcceptedUpdates": "accepted-updates"
+  },
+  "tileUrlTemplate": "/tiles/roads/{z}/{x}/{y}.pbf",
+  "tileMinZoom": 10,
+  "tileMaxZoom": 14
+}

@@ -1,0 +1,2 @@
+export const MISMATCH_VISIBLE_LINE_WIDTH = 3;
+export const MISMATCH_HIT_WIDTH = 24;

@@ -1,0 +1,23 @@
+{
+  "pilotAreaId": "bandar-kinrara-puchong",
+  "displayName": "Bandar Kinrara–Puchong Pilot Area",
+  "bounds": {
+    "west": 101.513671875,
+    "south": 2.899152698504301,
+    "east": 101.79931640625,
+    "north": 3.184394492338734
+  },
+  "boundsProvenance": {
+    "source": "served_z14_tiles_in_kinrara_puchong_search_window",
+    "searchWindow": { "west": 101.52, "south": 2.92, "east": 101.78, "north": 3.18 },
+    "z10TileGridInSearch": { "expected": 4, "present": 4 },
+    "z14RectWithinBounds": { "expected": 196, "present": 169, "missingTiles": 27 }
+  },
+  "defaultCenter": [101.631, 3.0265],
+  "defaultZoom": 12.2,
+  "fitPadding": 48,
+  "minDetailedRoadZoom": 10,
+  "minViewZoom": 10,
+  "maxViewZoom": 18,
+  "maxBoundsPaddingDegrees": 0.035
+}

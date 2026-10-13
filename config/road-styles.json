@@ -1,0 +1,36 @@
+{
+  "layerPrefix": "osm-baseline",
+  "classes": {
+    "motorway": { "color": "#e85d04", "width": [1, 2, 4, 6], "minZoom": 4 },
+    "motorway_link": { "color": "#f48c06", "width": [0.5, 1, 2, 3], "minZoom": 8 },
+    "trunk": { "color": "#dc2f02", "width": [1, 2, 3.5, 5], "minZoom": 5 },
+    "trunk_link": { "color": "#e85d04", "width": [0.5, 1, 2, 3], "minZoom": 9 },
+    "primary": { "color": "#f59e0b", "width": [0.5, 1.5, 3, 4], "minZoom": 6 },
+    "primary_link": { "color": "#fbbf24", "width": [0.5, 1, 2, 2.5], "minZoom": 10 },
+    "secondary": { "color": "#facc15", "width": [0.5, 1.2, 2.5, 3.5], "minZoom": 7 },
+    "secondary_link": { "color": "#fde047", "width": [0.5, 1, 1.5, 2], "minZoom": 11 },
+    "tertiary": { "color": "#fef08a", "width": [0.5, 1, 2, 2.5], "minZoom": 8 },
+    "tertiary_link": { "color": "#fef9c3", "width": [0.5, 0.8, 1.2, 1.5], "minZoom": 12 },
+    "residential": { "color": "#94a3b8", "width": [0.3, 0.6, 1.2, 1.8], "minZoom": 10 },
+    "unclassified": { "color": "#94a3b8", "width": [0.3, 0.6, 1.2, 1.8], "minZoom": 10 },
+    "living_street": { "color": "#a8b4c4", "width": [0.3, 0.5, 1, 1.5], "minZoom": 11 },
+    "service": { "color": "#9ca3af", "width": [0.2, 0.4, 0.8, 1.2], "minZoom": 12 },
+    "track": { "color": "#78716c", "width": [0.2, 0.4, 0.8, 1], "minZoom": 11 },
+    "path": { "color": "#6b7280", "dash": [2, 2], "width": [0.2, 0.3, 0.5, 0.6], "minZoom": 13 },
+    "footway": { "color": "#6b7280", "dash": [2, 2], "width": [0.2, 0.3, 0.5, 0.6], "minZoom": 13 },
+    "cycleway": { "color": "#6b7280", "dash": [2, 2], "width": [0.2, 0.3, 0.5, 0.6], "minZoom": 13 },
+    "pedestrian": { "color": "#6b7280", "dash": [2, 2], "width": [0.2, 0.3, 0.5, 0.6], "minZoom": 13 },
+    "steps": { "color": "#6b7280", "dash": [1, 2], "width": [0.2, 0.3, 0.4, 0.5], "minZoom": 14 },
+    "construction": { "color": "#a855f7", "dash": [4, 2], "width": [0.4, 0.8, 1.5, 2], "minZoom": 9 },
+    "proposed": { "color": "#c084fc", "dash": [4, 2], "width": [0.4, 0.8, 1.5, 2], "minZoom": 9 },
+    "_fallback": { "color": "#64748b", "width": [0.3, 0.5, 1, 1.5], "minZoom": 10 }
+  },
+  "legendGroups": [
+    { "label": "Motorways & trunk", "types": ["motorway", "motorway_link", "trunk", "trunk_link"] },
+    { "label": "Primary & secondary", "types": ["primary", "primary_link", "secondary", "secondary_link"] },
+    { "label": "Local roads", "types": ["tertiary", "tertiary_link", "residential", "unclassified", "living_street"] },
+    { "label": "Service & tracks", "types": ["service", "track"] },
+    { "label": "Paths & pedestrian", "types": ["path", "footway", "cycleway", "pedestrian", "steps"] },
+    { "label": "Construction / proposed", "types": ["construction", "proposed"] }
+  ]
+}

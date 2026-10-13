@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pintaz Map Prototype</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body class="app-shell">
+    <div id="setup-banner" class="setup-banner hidden"></div>
+    <div id="startup-error-panel" class="startup-error-panel hidden" hidden role="alert" aria-live="assertive">
+      <h2 class="startup-error-title">Map startup failed</h2>
+      <p><strong>Stage:</strong> <span id="startup-error-stage">—</span></p>
+      <p id="startup-error-message" class="startup-error-message"></p>
+      <p class="muted small"><strong>Resource:</strong> <span id="startup-error-resource">—</span></p>
+    </div>
+    <header class="app-header">
+      <h1>Pintaz Map Prototype</h1>
+      <p class="subtitle">Bukit Bintang–Imbi, Kuala Lumpur · 2 km × 2 km</p>
+    </header>
+    <main class="layout">
+      <aside class="sidebar">
+        <section class="panel">
+          <h2>Controls</h2>
+          <label class="field-row">
+            Area
+            <select id="area-selector" aria-label="Local 2 km area"></select>
+          </label>
+          <button type="button" id="fit-2km" class="btn btn-primary">Fit 2 km area</button>
+          <label class="checkbox-row">
+            <input type="checkbox" id="overlay-toggle" checked />
+            Detailed road overlay
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="show-paths" checked />
+            Walking / cycling paths
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="show-labels" checked />
+            Road labels
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="show-oneway" />
+            One-way arrows
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="emphasize-bridge-tunnel" />
+            Emphasize bridges / tunnels
+          </label>
+        </section>
+        <section class="panel" id="lane-baseline-panel">
+          <h2>OSM lane baseline</h2>
+          <p id="lane-baseline-no-area" class="muted small hidden">
+            Lane baseline not generated for this area yet. Switch to Bukit Bintang–Imbi or run the build script.
+          </p>
+          <p id="lane-baseline-empty" class="muted small hidden">Lane baseline data has not been generated.</p>
+          <div id="lane-baseline-body">
+            <p class="muted small">OSM-derived road surfaces and lane dividers — baseline before server comparison.</p>
+            <label class="checkbox-row">
+              <input type="checkbox" id="lane-baseline-surfaces-toggle" checked />
+              Show OSM road surfaces
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" id="lane-baseline-dividers-toggle" checked />
+              Show OSM lane dividers
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" id="lane-baseline-direction-toggle" checked />
+              Show direction markers
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" id="lane-baseline-unknown-toggle" checked />
+              Show roads with unknown lane count
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" id="lane-baseline-turn-guidance-toggle" />
+              Show OSM turn guidance
+            </label>
+            <button type="button" id="lane-baseline-fit" class="btn btn-secondary btn-block">Fit lane-data roads</button>
+            <dl class="status-dl compact-dl">
+              <dt>OSM roads</dt><dd id="lane-count-osm-roads">0</dd>
+              <dt>Usable lane count</dt><dd id="lane-count-usable">0</dd>
+              <dt>Directional lane data</dt><dd id="lane-count-directional">0</dd>
+              <dt>Estimated display width</dt><dd id="lane-count-estimated-width">0</dd>
+              <dt>Unknown lane count</dt><dd id="lane-count-unknown">0</dd>
+            </dl>
+            <ul class="legend legend-compact lane-baseline-legend">
+              <li><span class="swatch" style="background:#cbd5e1"></span>Solid road surface — OSM-derived baseline</li>
+              <li><span class="swatch swatch-dash" style="background:#fff;border:1px solid #cbd5e1"></span>White dashed lines — OSM lane dividers</li>
+              <li><span class="swatch" style="color:#1e40af">▶</span>Direction arrows — OSM one-way</li>
+              <li><span class="swatch" style="background:#94a3b8;opacity:0.5"></span>Muted outline — lane count unknown</li>
+              <li><span class="swatch swatch-dash" style="background:#fff"></span>Alternate centre dash — total lanes, direction split unknown</li>
+              <li><span class="swatch" style="color:#0f766e">⬅ ↑ ➡</span>Turn symbols — schematic OSM lane guidance, not surveyed road markings (zoom 16+, toggle above)</li>
+            </ul>
+          </div>
+        </section>
+        <section class="panel" id="observation-route-panel">
+          <h2>Observation route</h2>
+          <label class="field-row">
+            Observation route
+            <select id="observation-route-selector" aria-label="Observation route"></select>
+          </label>
+          <p id="observation-route-diagnostic-banner" class="observation-route-diagnostic-banner hidden" role="status">
+            Diagnostic local route — does not change the production active source.
+          </p>
+          <dl id="observation-route-metrics" class="status-dl compact-dl"></dl>
+        </section>
+        <section class="panel" id="server-evidence-panel">
+          <h2>Server comparison evidence</h2>
+          <p id="server-evidence-no-area" class="muted small hidden">No server observations for this area.</p>
+          <div id="server-evidence-body">
+            <label class="checkbox-row">
+              <input type="checkbox" id="server-evidence-toggle" />
+              Show server observations (Evidence)
+            </label>
+            <dl class="status-dl compact-dl" id="server-evidence-status">
+              <dt>Observation file</dt><dd id="server-evidence-loaded">—</dd>
+              <dt>Feature count</dt><dd id="server-evidence-feature-count">—</dd>
+              <dt>Coverage</dt><dd>Available only within the observed corridor</dd>
+            </dl>
+            <ul class="legend legend-compact" id="server-evidence-legend">
+              <li><span class="swatch swatch-dot" style="background:#2563eb"></span>Blue — vehicle pose</li>
+              <li><span class="swatch swatch-dot" style="background:#16a34a"></span>Green — lane observation</li>
+              <li><span class="swatch swatch-dot" style="background:#ea580c"></span>Orange — road-edge observation</li>
+              <li><span class="swatch swatch-dot" style="background:#c026d3"></span>Magenta — GPS fix</li>
+            </ul>
+            <p class="muted small">Outside the corridor: <em>Not evaluated against server observations</em>.</p>
+            <details class="update-details">
+              <summary>Evidence options</summary>
+              <label class="checkbox-row"><input type="checkbox" id="update-layer-vehicle-pose" checked /> Vehicle poses</label>
+              <label class="checkbox-row"><input type="checkbox" id="update-layer-lane-point" checked /> Lane points</label>
+              <label class="checkbox-row"><input type="checkbox" id="update-layer-edge-point" checked /> Edge points</label>
+              <label class="checkbox-row"><input type="checkbox" id="update-layer-gps-point" checked /> GPS points</label>
+            </details>
+          </div>
+        </section>
+        <section class="panel" id="road-comparison-panel">
+          <h2>Road comparison</h2>
+          <p id="road-comparison-no-area" class="muted small hidden">No comparison data for this area.</p>
+          <p id="road-comparison-empty" class="muted small hidden">Comparison data has not been generated.</p>
+          <div id="road-comparison-body">
+            <p class="muted small" id="road-comparison-scope-note">Complete active route — production comparison vs OSM lane baseline.</p>
+            <label class="checkbox-row">
+              <input type="checkbox" id="comparison-sections-toggle" checked />
+              Show comparison sections
+            </label>
+            <button type="button" id="comparison-zoom-verified" class="btn btn-secondary btn-block">Zoom to verified section</button>
+            <button type="button" id="comparison-zoom-proposed" class="btn btn-secondary btn-block hidden">Zoom to proposed changes</button>
+            <p id="comparison-no-proposed-hint" class="muted small">No proposed map changes in this sample.</p>
+            <dl class="status-dl compact-dl comparison-counts-dl">
+              <dt>Verified</dt><dd id="comparison-count-verified">0</dd>
+              <dt>Proposed changes</dt><dd id="comparison-count-proposed">0</dd>
+              <dt>Ambiguous</dt><dd id="comparison-count-ambiguous">0</dd>
+              <dt>Insufficient evidence</dt><dd id="comparison-count-insufficient">0</dd>
+            </dl>
+            <ul class="legend legend-compact comparison-legend">
+              <li><span class="swatch" style="background:#14b8a6"></span>Verified — no change suggested</li>
+              <li><span class="swatch" style="background:#f59e0b"></span>Pending proposed change</li>
+              <li><span class="swatch" style="background:#16a34a"></span>Accepted proposed change</li>
+              <li><span class="swatch" style="background:#dc2626"></span>Rejected proposed change</li>
+              <li><span class="swatch swatch-dash" style="background:#94a3b8"></span>Diagnostic result</li>
+            </ul>
+            <details class="update-details">
+              <summary>Advanced comparison diagnostics</summary>
+              <label class="checkbox-row">
+                <input type="checkbox" id="comparison-show-ambiguous" />
+                Show ambiguous sections
+              </label>
+              <label class="checkbox-row">
+                <input type="checkbox" id="comparison-show-insufficient" />
+                Show insufficient-evidence sections
+              </label>
+            </details>
+            <button type="button" id="comparison-reset-proposals" class="btn btn-secondary btn-block">Reset proposed-change decisions</button>
+          </div>
+        </section>
+        <section class="panel" id="mismatch-panel">
+          <h2>OSM vs server mismatch</h2>
+          <p id="mismatch-no-area" class="muted small hidden">No mismatch analysis for this area.</p>
+          <div id="mismatch-body">
+            <p class="muted small partial-warning" id="mismatch-scope-note">Analysis scope: observed corridor only.</p>
+            <label class="checkbox-row">
+              <input type="checkbox" id="mismatch-results-toggle" checked />
+              Show mismatch results
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" id="mismatch-consistent-toggle" checked />
+              Show consistent sections
+            </label>
+            <details class="update-details">
+              <summary>Advanced mismatch diagnostics</summary>
+              <label class="checkbox-row">
+                <input type="checkbox" id="mismatch-diagnostics-toggle" />
+                Show diagnostics
+              </label>
+            </details>
+            <button type="button" id="mismatch-zoom-candidates" class="btn btn-secondary btn-block">Zoom to mismatch candidates</button>
+            <button type="button" id="mismatch-reset-decisions" class="btn btn-secondary btn-block">Reset mismatch decisions</button>
+            <p id="mismatch-zero-candidates-hint" class="muted small">No stable OSM/server mismatch found in the current partial sample.</p>
+            <p class="muted small">Locally usable geometry is not the same as support-eligible comparison evidence.</p>
+            <dl class="status-dl compact-dl mismatch-counts-dl">
+              <dt>Sections checked</dt><dd id="mismatch-count-evaluated">0</dd>
+              <dt>Locally usable geometry</dt><dd id="mismatch-count-locally-usable">0</dd>
+              <dt>Support eligible</dt><dd id="mismatch-count-support-eligible">0</dd>
+              <dt>Review candidates</dt><dd id="mismatch-count-review">0</dd>
+              <dt>Consistent</dt><dd id="mismatch-count-consistent">0</dd>
+              <dt>Lane-count candidates</dt><dd id="mismatch-count-lane">0</dd>
+              <dt>Centre-line candidates</dt><dd id="mismatch-count-centerline">0</dd>
+              <dt>Display-width candidates</dt><dd id="mismatch-count-width">0</dd>
+              <dt>Missing lane metadata</dt><dd id="mismatch-count-metadata">0</dd>
+              <dt>Insufficient evidence</dt><dd id="mismatch-count-insufficient">0</dd>
+              <dt>Ambiguous</dt><dd id="mismatch-count-ambiguous">0</dd>
+              <dt>Unsupported</dt><dd id="mismatch-count-unsupported">0</dd>
+              <dt>Not evaluated</dt><dd id="mismatch-count-not-evaluated">0</dd>
+            </dl>
+            <div id="mismatch-gate-reasons" class="muted small hidden">
+              <p><strong>Top gate failures</strong></p>
+              <ul id="mismatch-gate-reason-list"></ul>
+            </div>
+            <ul class="legend legend-compact mismatch-legend">
+              <li><span class="swatch" style="background:#14b8a6"></span>Teal — consistent</li>
+              <li><span class="swatch" style="background:#f59e0b"></span>Amber — pending review candidate</li>
+              <li><span class="swatch" style="background:#16a34a"></span>Green — accepted candidate</li>
+              <li><span class="swatch" style="background:#dc2626"></span>Red — rejected candidate</li>
+              <li><span class="swatch swatch-dash" style="background:#94a3b8"></span>Grey dashed — diagnostic / insufficient</li>
+            </ul>
+          </div>
+        </section>
+        <section class="panel" id="multi-drive-panel">
+          <h2>Multi-drive OSM comparison</h2>
+          <p id="multi-drive-no-area" class="muted small hidden">Multi-drive analysis is only available for Bukit Bintang–Imbi.</p>
+          <div id="multi-drive-body">
+            <p class="muted small">Per-drive OSM sections — cross-drive aggregation is not active. Multi-drive candidates: 0. Pilot-scoped matcher uses inclusive Bukit bbox edges.</p>
+            <p id="md-terminology-note" class="muted small">Single-drive OSM consistency does not imply cross-drive agreement or a verified map update.</p>
+            <label class="checkbox-row">
+              <input type="checkbox" id="md-toggle-comparison" checked />
+              Show multi-drive comparison
+            </label>
+            <button type="button" id="md-zoom-evidence" class="btn btn-secondary btn-block">Zoom to reviewed evidence</button>
+            <label class="checkbox-row">
+              <input type="checkbox" id="md-toggle-single" />
+              Show single-drive signals
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" id="md-toggle-diagnostics" />
+              Show diagnostics
+            </label>
+            <button type="button" id="md-reset-decisions" class="btn btn-secondary btn-block">Reset multi-drive decisions</button>
+            <dl class="status-dl compact-dl">
+              <dt>Drives analysed</dt><dd id="md-count-drives">0</dd>
+              <dt>Distinct dongle groups</dt><dd id="md-count-dongles">0</dd>
+              <dt>Total route poses</dt><dd id="md-count-total-poses">0</dd>
+              <dt>Pilot poses</dt><dd id="md-count-pilot-poses">0</dd>
+              <dt>Matched pilot poses</dt><dd id="md-count-matched-pilot">0</dd>
+              <dt>Excluded outside pilot</dt><dd id="md-count-excluded-pilot">0</dd>
+              <dt>Support-eligible centreline</dt><dd id="md-count-support-centreline">0</dd>
+              <dt>Support-eligible lane/edge</dt><dd id="md-count-support-lane-edge">0</dd>
+              <dt>Single-drive consistent (OSM)</dt><dd id="md-count-single-consistent">0</dd>
+              <dt>OSM roads evaluated</dt><dd id="md-count-osm">0</dd>
+              <dt>Consistent across drives</dt><dd id="md-count-consistent">0</dd>
+              <dt>Multi-drive candidates</dt><dd id="md-count-candidates">0</dd>
+              <dt>Single-drive signals</dt><dd id="md-count-single">0</dd>
+              <dt>Conflicts</dt><dd id="md-count-conflicts">0</dd>
+              <dt>Insufficient / not evaluated</dt><dd id="md-count-insufficient">0</dd>
+            </dl>
+            <div id="md-gate-reasons" class="muted small">
+              <p><strong>Top failure reasons</strong></p>
+              <ul id="md-top-failures"></ul>
+            </div>
+            <ul class="legend legend-compact">
+              <li><span class="swatch" style="background:#2dd4bf"></span>Teal — single-drive consistent with OSM</li>
+              <li><span class="swatch" style="background:#14b8a6"></span>Green-teal — consistent across drives</li>
+              <li><span class="swatch" style="background:#f59e0b"></span>Amber — pending multi-drive candidate</li>
+              <li><span class="swatch" style="background:#16a34a"></span>Green — accepted candidate</li>
+              <li><span class="swatch" style="background:#dc2626"></span>Red — rejected candidate</li>
+              <li><span class="swatch swatch-dash" style="background:#a855f7"></span>Purple dashed — single-drive signal</li>
+              <li><span class="swatch swatch-dash" style="background:#ea580c"></span>Orange dashed — conflicting evidence</li>
+              <li><span class="swatch swatch-dash" style="background:#94a3b8"></span>Grey dashed — insufficient / not evaluated</li>
+            </ul>
+          </div>
+        </section>
+        <section class="panel observation-info-panel" id="observation-info-panel">
+          <h2>Observation info</h2>
+          <div id="observation-info" class="road-info muted">Click a server observation on the map.</div>
+        </section>
+        <section class="panel">
+          <h2>Status</h2>
+          <dl id="status-panel" class="status-dl"></dl>
+        </section>
+        <section class="panel">
+          <h2>Road info</h2>
+          <div id="road-info" class="road-info muted">Click a road on the map.</div>
+        </section>
+        <section class="panel">
+          <h2>Server observations</h2>
+          <p class="muted small">Maps Read observation points — not fused into the OSM baseline.</p>
+          <ul class="legend legend-compact" id="update-observation-legend">
+            <li><span class="swatch swatch-dot" style="background:#2563eb"></span>Blue — Vehicle pose</li>
+            <li><span class="swatch swatch-dot" style="background:#16a34a"></span>Green — Lane observation</li>
+            <li><span class="swatch swatch-dot" style="background:#ea580c"></span>Orange — Road-edge observation</li>
+            <li><span class="swatch swatch-dot" style="background:#c026d3"></span>Magenta — GPS fix</li>
+          </ul>
+        </section>
+        <section class="panel">
+          <h2>Legend</h2>
+          <ul class="legend legend-compact">
+            <li><span class="swatch" style="background:#e8944a"></span>Motorway / trunk</li>
+            <li><span class="swatch" style="background:#e8c84a"></span>Primary</li>
+            <li><span class="swatch" style="background:#6b9fd4"></span>Secondary</li>
+            <li><span class="swatch" style="background:#5fada6"></span>Tertiary</li>
+            <li><span class="swatch" style="background:#e2e6eb;border:1px solid #7a828c"></span>Local streets</li>
+            <li><span class="swatch" style="background:#8fa3b8"></span>Service roads</li>
+            <li><span class="swatch" style="background:#9a8570"></span>Walking paths</li>
+            <li><span class="swatch" style="background:#5da86a"></span>Cycleways</li>
+            <li><span class="swatch" style="background:#a78bc4"></span>Construction / other</li>
+          </ul>
+        </section>
+        <section class="panel">
+          <h2>Area diagnostics</h2>
+          <dl id="area-diagnostics" class="status-dl coverage-dl"></dl>
+        </section>
+        <details class="panel diagnostics">
+          <summary>Debug: tile coverage inventory</summary>
+          <label class="checkbox-row">
+            <input type="checkbox" id="coverage-mode-toggle" />
+            Coverage display mode
+          </label>
+          <label class="field-row">
+            Coverage zoom
+            <select id="coverage-zoom">
+              <option value="10">10</option>
+              <option value="12" selected>12</option>
+              <option value="14">14</option>
+            </select>
+          </label>
+          <label class="field-row">
+            Min road features
+            <input type="number" id="coverage-min-roads" min="0" value="1" />
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="coverage-show-missing" checked />
+            Show missing internal tiles
+          </label>
+          <button type="button" id="coverage-fit-malaysia" class="btn btn-secondary">Fit all Malaysian coverage</button>
+          <button type="button" id="coverage-fit-component" class="btn btn-secondary">Fit selected component</button>
+          <button type="button" id="coverage-return-pilot" class="btn btn-secondary">Return to 2 km area</button>
+          <p id="coverage-hover-info" class="coverage-hover-info"></p>
+        </details>
+      </aside>
+      <div class="map-wrap">
+        <div id="map"></div>
+        <aside id="map-selection-card" class="map-selection-card hidden" aria-live="polite">
+          <header class="map-selection-card-header">
+            <h2 id="map-selection-card-title">Selection</h2>
+            <button type="button" id="map-selection-card-close" class="btn btn-secondary btn-icon" aria-label="Close">×</button>
+          </header>
+          <div id="map-selection-card-body" class="map-selection-card-body"></div>
+        </aside>
+      </div>
+    </main>
+    <footer class="attribution-footer">
+      <span id="attr-mapbox"></span>
+      <span> · </span>
+      <span>© OpenStreetMap contributors</span>
+    </footer>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.4/mapbox-gl.js"></script>
+    <script src="/app.js?v=osm-turn-lane-guidance-v2" type="module"></script>
+  </body>
+</html>

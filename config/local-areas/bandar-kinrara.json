@@ -1,0 +1,10 @@
+{
+  "id": "bandar-kinrara",
+  "displayName": "Bandar Kinrara",
+  "centre": {
+    "latitude": 3.046,
+    "longitude": 101.645
+  },
+  "widthM": 2000,
+  "heightM": 2000
+}

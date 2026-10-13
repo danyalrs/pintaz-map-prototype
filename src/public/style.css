@@ -1,0 +1,508 @@
+:root {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #2563eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  height: 100%;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  height: 100%;
+}
+
+.app-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.sidebar {
+  border-right: 1px solid var(--border);
+  padding: 0.75rem;
+  overflow-y: auto;
+  background: var(--panel);
+  min-height: 0;
+}
+
+.panel {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.map-wrap {
+  position: relative;
+}
+
+.map-selection-card {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: min(340px, 42vw);
+  max-height: min(70vh, 520px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.18);
+  z-index: 5;
+}
+
+.map-selection-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.map-selection-card-header h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.map-selection-card-body {
+  padding: 0.65rem 0.75rem;
+  overflow-y: auto;
+  font-size: 0.8rem;
+}
+
+.btn-icon {
+  min-width: 2rem;
+  padding: 0.15rem 0.45rem;
+  line-height: 1.2;
+}
+
+.partial-warning {
+  font-size: 0.75rem;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.oneway-note {
+  font-size: 0.78rem;
+  color: #1d4ed8;
+  margin: 0 0 0.35rem;
+}
+
+.osm-vs-route-block {
+  margin-top: 0.65rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.osm-vs-route-heading {
+  margin: 0 0 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.proposal-baseline {
+  margin: 0.5rem 0;
+  font-size: 0.78rem;
+}
+
+.proposal-baseline summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.verified-banner {
+  font-weight: 600;
+  color: #0f766e;
+  margin: 0 0 0.35rem;
+}
+
+.comparison-legend .swatch-dash {
+  border: 1px dashed #64748b;
+}
+
+.comparison-counts-dl {
+  margin-top: 0.35rem;
+}
+
+@media (max-width: 900px) {
+  .map-selection-card {
+    top: auto;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: 45vh;
+    border-radius: 12px 12px 0 0;
+  }
+}
+
+.map-wrap-inner,
+.map-wrap {
+  position: relative;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Mapbox root must fill #map; otherwise canvas-container can stay at height 0. */
+#map.mapboxgl-map,
+#map .mapboxgl-canvas-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.btn {
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+  width: 100%;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: var(--text);
+}
+
+.pilot-scope-notice {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+}
+
+.pilot-scope-notice.inside-ok {
+  color: #166534;
+  background: #ecfdf5;
+  border: 1px solid #86efac;
+}
+
+.pilot-scope-notice.outside-warn {
+  color: #9a3412;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+}
+
+.pilot-scope-notice.zoom-warn {
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+}
+
+.coverage-dl {
+  font-size: 0.75rem;
+}
+
+.coverage-panel select,
+.coverage-panel input[type='number'] {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.field-row {
+  display: block;
+  font-size: 0.78rem;
+  margin-bottom: 0.45rem;
+}
+
+.coverage-hover-info {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  min-height: 2.5em;
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.status-dl {
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.status-dl dt {
+  font-weight: 600;
+  margin-top: 0.35rem;
+}
+
+.status-dl dd {
+  margin: 0.1rem 0 0;
+  color: var(--muted);
+}
+
+.road-info {
+  font-size: 0.78rem;
+  white-space: pre-wrap;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.swatch {
+  width: 28px;
+  height: 4px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.swatch-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.5rem 0;
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: 0.35rem;
+}
+
+.panel-subhead {
+  font-size: 0.82rem;
+  margin: 0.65rem 0 0.25rem;
+  font-weight: 600;
+}
+
+.compact-dl dt {
+  font-size: 0.72rem;
+}
+
+.compact-dl dd {
+  font-size: 0.78rem;
+  margin-bottom: 0.2rem;
+}
+
+.observation-route-diagnostic-banner {
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.small {
+  font-size: 0.75rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.observation-info-panel.observation-info--active h2 {
+  color: #1d4ed8;
+}
+
+.observation-disclaimer {
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: #0f172a;
+}
+
+.setup-banner {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #fcd34d;
+  font-size: 0.9rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.startup-error-panel {
+  background: #fef2f2;
+  border-bottom: 1px solid #fecaca;
+  color: #7f1d1d;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+}
+
+.startup-error-title {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.startup-error-message {
+  margin: 0.25rem 0;
+}
+
+.attribution-footer {
+  font-size: 0.72rem;
+  color: var(--muted);
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.osm-vs-route-block {
+  margin-top: 0.75rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--border);
+}
+
+.osm-vs-route-heading {
+  margin: 0 0 0.35rem;
+  font-size: 0.85rem;
+}
+
+.osm-vs-route-map-hint {
+  margin: 0 0 0.5rem;
+  line-height: 1.35;
+}
+
+.osm-vs-route-badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.55rem;
+  border-radius: 6px;
+  margin: 0 0 0.5rem;
+}
+
+.osm-vs-route-badge--aligned {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #6ee7b7;
+}
+
+.osm-vs-route-badge--insufficient {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+}
+
+.osm-vs-route-badge--mismatch {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.osm-vs-route-badge--unknown {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.zoom-notice {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+}
+
+.diagnostics pre {
+  font-size: 0.7rem;
+  max-height: 200px;
+  overflow: auto;
+  background: #f1f5f9;
+  padding: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}

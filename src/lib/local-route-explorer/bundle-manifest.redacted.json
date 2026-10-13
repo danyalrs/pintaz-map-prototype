@@ -1,0 +1,7 @@
+{
+  "schema": "pintaz.local-route-explorer.bundle-manifest.redacted",
+  "version": 1,
+  "explorer_version": "local-route-explorer-v1",
+  "note": "Runtime copy under data/maps-read/local-route-explorer-v1/ is gitignored; this file documents expected route keys only.",
+  "route_keys": ["active", "drive-001", "drive-005", "drive-007", "drive-008", "drive-010"]
+}
