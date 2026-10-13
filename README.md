@@ -2,9 +2,9 @@
 
 **Pintaz Map Prototype** is a research and engineering workspace for a small **Mapbox-based road map** (Malaysia pilot areas) plus **offline pipelines** that compare vehicle observations to OSM, audit Maps Read exports, and screen routes for **future geometry work** on unknown-lane roads. It is **not** a verified lane-counting or OSM auto-enrichment product.
 
-![Synthetic viewer layout — not a live Mapbox capture](docs/images/viewer-synthetic-example.svg)
+![Synthetic viewer illustration](docs/images/viewer-synthetic-example.png)
 
-*Figure 1 — **Synthetic UI layout** (illustration only). The real app uses your Mapbox token and locally built OSM vector tiles; this image contains no satellite imagery, traces, or private coordinates.*
+*Figure 1 — **Synthetic illustration only** (not an actual application screenshot). The real app uses your Mapbox token and locally built OSM vector tiles; this image contains no satellite imagery, traces, or private coordinates.*
 
 ---
 
