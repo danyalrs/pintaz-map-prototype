@@ -4,6 +4,7 @@ import { ROOT_DIR } from '../../config.js';
 import { mapsReadRootDir } from '../maps-read-root.js';
 
 const SAVED_DOCS_PATHS = [
+  path.join(ROOT_DIR, 'docs', 'reference', 'maps-read-docs.safe.json'),
   path.join(mapsReadRootDir(), 'docs.safe.json'),
   path.join(mapsReadRootDir(), 'docs-response.json'),
   path.join(ROOT_DIR, 'data', 'maps-read', 'docs.safe.json'),

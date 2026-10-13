@@ -7,7 +7,7 @@ import {
   redactPerDriveSection,
   isSingleDriveConsistentSection,
 } from '../src/lib/multi-drive-redact.js';
-import { redactedDongleAuditForReports, buildActualDongleGroups } from '../src/lib/multi-drive-dongle-audit.js';
+import { redactedDongleAuditForReports } from '../src/lib/multi-drive-dongle-audit.js';
 import { aggregateSummaryRedactedPath, aggregateSectionsRedactedPath } from '../src/lib/multi-drive-mismatch-paths.js';
 import { registerMultiDriveMismatchRoutes } from '../src/lib/multi-drive-routes.js';
 import express from 'express';
@@ -35,7 +35,19 @@ test('assertPublicOutputSafe rejects bearer token string', () => {
 });
 
 test('redacted dongle audit exposes groups only', () => {
-  const audit = redactedDongleAuditForReports(buildActualDongleGroups());
+  const auditInput = {
+    distinct_real_dongles: 2,
+    groups: [
+      { dongle_group: 'dongle-group-A', drive_keys: ['drive-001', 'drive-002'] },
+      { dongle_group: 'dongle-group-B', drive_keys: ['drive-005'] },
+    ],
+    drives: [
+      { drive_key: 'drive-001', redacted_drive_ref: 'probe-001', dongle_group: 'dongle-group-A' },
+      { drive_key: 'drive-002', redacted_drive_ref: 'probe-002', dongle_group: 'dongle-group-A' },
+      { drive_key: 'drive-005', redacted_drive_ref: 'probe-005', dongle_group: 'dongle-group-B' },
+    ],
+  };
+  const audit = redactedDongleAuditForReports(auditInput);
   assertPublicOutputSafe(audit);
   assert.ok(audit.groups.every((g) => !('dongle_fingerprint' in g)));
 });

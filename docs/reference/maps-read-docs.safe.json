@@ -1,0 +1,134 @@
+{
+  "service": "maps-read",
+  "summary": "Read-only access to stored pre-10.1 qlog geometry in kommu_maps. Lane and road-edge points are modelV2 samples at x=1 metre.",
+  "listen": "http://127.0.0.1:8910",
+  "authentication": {
+    "type": "bearer",
+    "header": "Authorization",
+    "value_format": "Bearer <token>",
+    "required_on": [
+      "/v1/*"
+    ],
+    "not_required_on": [
+      "/health",
+      "/docs"
+    ],
+    "rejected_in_query_string": true,
+    "secret_included_in_this_document": false,
+    "failure": {
+      "status": 401,
+      "body": {
+        "error": "unauthorized"
+      }
+    }
+  },
+  "shared_rules": {
+    "bbox": {
+      "order": [
+        "minLon",
+        "minLat",
+        "maxLon",
+        "maxLat"
+      ],
+      "max_edge_exclusive": true,
+      "max_side_degrees": 0.25,
+      "example": "101.709,3.141,101.727,3.159"
+    },
+    "segment_rule": "A segment is inside a bbox when its first usable GPS fix (origin_lat, origin_lon) falls inside. status must be done.",
+    "database_timeout_seconds": 30
+  },
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "auth": false,
+      "purpose": "Process check. Returns no map data.",
+      "response": {
+        "status": "ok",
+        "service": "maps-read"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/docs",
+      "auth": false,
+      "purpose": "This document. It describes the token header and never contains the token."
+    },
+    {
+      "method": "GET",
+      "path": "/v1/coverage",
+      "auth": true,
+      "purpose": "Count stored data whose segment origin falls in the box.",
+      "query": {
+        "bbox": "required. minLon,minLat,maxLon,maxLat"
+      },
+      "example": "/v1/coverage?bbox=101.709,3.141,101.727,3.159",
+      "response_fields": [
+        "bbox",
+        "segments",
+        "dongles",
+        "routes",
+        "model_frames",
+        "gps_fixes"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/routes",
+      "auth": true,
+      "purpose": "List drives inside a box so a client can request one route at a time.",
+      "query": {
+        "bbox": "required",
+        "limit": "optional, default 100, maximum 500",
+        "offset": "optional, default 0"
+      },
+      "example": "/v1/routes?bbox=101.709,3.141,101.727,3.159&limit=100",
+      "response_fields": [
+        "bbox",
+        "limit",
+        "offset",
+        "returned",
+        "next_offset",
+        "routes"
+      ],
+      "route_fields": [
+        "dongle",
+        "route",
+        "version",
+        "segments",
+        "model_frames",
+        "gps_fixes"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/geojson",
+      "auth": true,
+      "purpose": "One drive as a FeatureCollection in schema kommu.maps.visualization-point-cloud version 1. Lookup is by dongle and route, which uses the segment index.",
+      "query": {
+        "dongle": "required. 16 lowercase hex characters",
+        "route": "required. YYYY-MM-DD--HH-MM-SS",
+        "layers": "optional comma list. Default vehicle_pose,lane_point,edge_point. gps_point is optional.",
+        "after_seg": "optional segment number. Return later segments only.",
+        "max_features": "optional, default and maximum 80000"
+      },
+      "example": "/v1/geojson?dongle=0011223344556677&route=2026-07-23--03-03-40&layers=vehicle_pose,lane_point,edge_point,gps_point",
+      "feature_layers": {
+        "vehicle_pose": "Car position for one model frame.",
+        "lane_point": "Lane line at x=1 m. lane_index 0 and 1 are the left side, 2 and 3 the right side.",
+        "edge_point": "Road edge at x=1 m. edge_index 0 is the left edge and 1 is the right edge.",
+        "gps_point": "GPS fix from gpsLocation or gpsLocationExternal."
+      },
+      "paging": "When the drive does not fit in max_features, metadata.truncated is true and metadata.next_after_seg is the last segment included. Repeat the request with after_seg set to that value.",
+      "geometry": "Point coordinates are [longitude, latitude] in EPSG:4326."
+    }
+  ],
+  "errors": {
+    "400": "Missing or invalid query parameter.",
+    "401": "Missing or wrong bearer token on a /v1/ path.",
+    "404": "No stored done segments for that dongle and route.",
+    "405": "Only GET is served.",
+    "500": "Unexpected server error.",
+    "503": "Database unavailable."
+  }
+}

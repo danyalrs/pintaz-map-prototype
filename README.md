@@ -34,8 +34,9 @@ Open **http://127.0.0.1:3901**
 | Step | Command | Data required |
 |------|---------|----------------|
 | Install deps | `npm install` | None |
-| Configure map | `.env` with `MAPBOX_ACCESS_TOKEN` (`pk.` only) | Mapbox account |
-| Run viewer | `npm start` | Optional: `data/tiles/` for coloured OSM roads |
+| Configure map | `.env` with `MAPBOX_ACCESS_TOKEN` (`pk.` only) | Mapbox account (**required for basemap**) |
+| Run viewer | `npm start` | Opens UI; overlay needs `data/tiles/` |
+| Public tests | `npm run test:public` | No private data |
 | Full road overlay | `npm run download:osm` → `extract:roads` → `build:tiles` | ~GB disk; see [docs/DATA_PIPELINE.md](docs/DATA_PIPELINE.md) |
 | Unit tests (subset) | `npm test` | Many tests skip without local bundles |
 | Road data check | `npm run validate:data` | Built `data/processed` + `data/tiles` |
@@ -118,15 +119,29 @@ reports/public/                Redacted aggregate reports only
 
 ## Tests
 
+| Command | What it checks |
+|---------|----------------|
+| **`npm run test:public`** | Curated tests using only repo code + fixtures (see [docs/TESTING.md](docs/TESTING.md)) |
+| **`npm test`** | Full suite; many tests need local `data/` trees or comparison bundles |
+| **`npm run validate:data`** | OSM extract + road tiles on disk (not included in public repo) |
+
 ```bash
-npm test
+npm run test:public
 node --check src/server.js
 ```
 
-On a fresh clone, `npm run validate:data` fails until road tiles are built — that is expected. Integration tests for Maps Read discovery skip when `data/maps-read/` is absent.
+---
+
+## What you see in the browser
+
+| Configuration | What loads |
+|---------------|------------|
+| `npm start` only (no `.env` token) | Server and page shell; **Mapbox basemap will not render** until `MAPBOX_ACCESS_TOKEN=pk.…` is set |
+| Valid `pk.` token, no `data/tiles/` | Mapbox basemap; **no coloured OSM road overlay** (status banner explains missing tiles) |
+| Token + built tiles | Basemap + styled local OSM roads at zoom ≥ 10 |
 
 ---
 
 ## Licensing
 
-Map data © OpenStreetMap contributors. Mapbox © Mapbox. No `LICENSE` file is included; add one at the owner’s discretion.
+Map data © OpenStreetMap contributors. Mapbox © Mapbox. **No licence is currently provided.**

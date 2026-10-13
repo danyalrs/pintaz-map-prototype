@@ -16,7 +16,8 @@
     "scan:coverage": "node scripts/scan-road-tile-coverage.js",
     "extract:2km": "node scripts/extract-2km-bandar-kinrara.js",
     "extract:2km:bukit": "node scripts/extract-2km-local-area.js bukit-bintang-imbi",
-    "test": "node --test tests"
+    "test": "node --test tests",
+    "test:public": "node scripts/run-public-tests.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

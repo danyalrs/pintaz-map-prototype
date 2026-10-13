@@ -89,11 +89,12 @@ node scripts/run-full-maps-read-route-enrichment-discovery-v1.js
 ### Validation
 
 ```bash
-npm test -- tests/final-phase3-results.test.js tests/qualified-lane-edge-export-audit.test.js tests/full-maps-read-phase3-shortlist.test.js
-npm run validate:data
+npm run test:public
+node --check src/server.js
+npm run validate:data   # full OSM/tile tree — not on public clone
 ```
 
-**Reported results (handover run):** `final-phase3-results` and `qualified-lane-edge-export-audit` tests **pass**; `validate:data` **ok** (road dataset checksum + tile sample).
+See [docs/TESTING.md](docs/TESTING.md). Public clone: **`npm run test:public`** validates committed fixtures and redacted `reports/public/` aggregates. Full `npm test` and `validate:data` need additional local datasets.
 
 ---
 
